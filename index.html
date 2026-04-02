@@ -352,5 +352,564 @@ function App(){
 
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
-</body>
+
 </html>
+import { useState } from "react";
+
+const vehiculo = {
+  matricula: "V-9293-DK",
+  marca: "RENAULT",
+  modelo: "S 150 09 TI ABIERTA",
+  tipo: "Camión Caja Abierta",
+  bastidor: "VF6JN1E2400011179",
+  fechaMatriculacion: "11/06/1990",
+  combustible: "Diésel",
+  cilindrada: "5.488 cc",
+  potenciaFiscal: "28 CVF",
+  plazas: 3,
+  masaMaxima: "9.500 kg",
+  tara: "6.000 kg",
+  servicio: "Público - Sin especificar",
+  titular: "GRÚAS Y TRANSPORTES CONEJERO S.L.",
+  cif: "B96711650",
+  domicilio: "Cmno. Anohuers, 91 Bajo - 46012 Valencia",
+};
+
+const secciones = [
+  {
+    id: "identificacion",
+    titulo: "Identificación del Vehículo",
+    icono: "🚛",
+    color: "#2563eb",
+    contenido: [
+      { label: "Matrícula", valor: vehiculo.matricula },
+      { label: "Marca", valor: vehiculo.marca },
+      { label: "Modelo", valor: vehiculo.modelo },
+      { label: "Tipo", valor: vehiculo.tipo },
+      { label: "Bastidor", valor: vehiculo.bastidor },
+      { label: "Fecha Matriculación", valor: vehiculo.fechaMatriculacion },
+      { label: "Combustible", valor: vehiculo.combustible },
+      { label: "Cilindrada", valor: vehiculo.cilindrada },
+      { label: "Potencia Fiscal", valor: vehiculo.potenciaFiscal },
+      { label: "Plazas", valor: vehiculo.plazas },
+      { label: "Masa Máxima", valor: vehiculo.masaMaxima },
+      { label: "Tara", valor: vehiculo.tara },
+      { label: "Servicio", valor: vehiculo.servicio },
+    ],
+  },
+  {
+    id: "titular",
+    titulo: "Titular / Propietario",
+    icono: "🏢",
+    color: "#059669",
+    contenido: [
+      { label: "Empresa", valor: vehiculo.titular },
+      { label: "CIF", valor: vehiculo.cif },
+      { label: "Domicilio", valor: vehiculo.domicilio },
+      { label: "Teléfono", valor: "963 563 716" },
+      { label: "Email", valor: "gruasconejero@gruasconejero.com" },
+      { label: "Administrador", valor: "Jose Luis Conejero Asunción" },
+      { label: "DNI Administrador", valor: "52685403Q" },
+    ],
+  },
+  {
+    id: "permisoCirculacion",
+    titulo: "Permiso de Circulación",
+    icono: "📋",
+    color: "#7c3aed",
+    estado: { texto: "Vigente", tipo: "ok" },
+    contenido: [
+      { label: "Matrícula", valor: "V-9293-DK" },
+      { label: "Fecha expedición", valor: "22/10/2012" },
+      { label: "Lugar expedición", valor: "Valencia" },
+      { label: "Titular", valor: "Grúas y Transportes Conejero S.L." },
+      { label: "Marca", valor: "RENAULT" },
+      { label: "Modelo", valor: "S 150 09 TI ABIERTA" },
+      { label: "Servicio", valor: "PUBL-SIN ESPECIFICAR" },
+      { label: "Nº Bastidor", valor: "VF6JN1E2400011179" },
+      { label: "MMA (F.2)", valor: "9.500 kg" },
+      { label: "Plazas (S.1)", valor: "003" },
+    ],
+  },
+  {
+    id: "fichaTecnica",
+    titulo: "Ficha Técnica (ITV)",
+    icono: "🔧",
+    color: "#dc2626",
+    estado: { texto: "Válida hasta 26/05/2026", tipo: "ok" },
+    contenido: [
+      { label: "Certificado nº", valor: "F31015656" },
+      { label: "Clasificación", valor: "Camión 3500 Kg < MMA <= 12000 Kg. Caja abierta" },
+      { label: "Organismo inspector", valor: "I.T.V. de Levante, S.A. - 4601" },
+      { label: "Fecha emisión", valor: "28/03/2018" },
+      { label: "Neumáticos", valor: "225/75R17.5" },
+      { label: "Opciones homologadas", valor: "GRÚA PALFINGER MOD. PK 5800F Nº 9563176" },
+      { label: "Última ITV favorable", valor: "26/11/2025" },
+      { label: "Válido hasta", valor: "28/05/2026" },
+      { label: "Kilometraje última ITV", valor: "2.799 km (cuentakilómetros reiniciado)" },
+    ],
+  },
+  {
+    id: "itv",
+    titulo: "Historial de ITVs (últimas)",
+    icono: "✅",
+    color: "#0891b2",
+    contenido: [
+      { label: "26/11/2025", valor: "FAVORABLE — Válido hasta 28/05/2026 — 2.799 km" },
+      { label: "18/02/2025", valor: "FAVORABLE — Válido hasta 27/08/2025 — 2.870 km" },
+      { label: "27/02/2024", valor: "DESFAVORABLE — 964 km" },
+      { label: "20/08/2024", valor: "FAVORABLE — 27/08/2024" },
+      { label: "10/07/2023", valor: "FAVORABLE — 850 km" },
+      { label: "20/01/2023", valor: "FAVORABLE — 594.315 km" },
+      { label: "12/07/2022", valor: "FAVORABLE — 592.166 km" },
+      { label: "19/11/2021", valor: "FAVORABLE — 588.886 km" },
+      { label: "08/04/2021", valor: "FAVORABLE — 585.505 km" },
+    ],
+  },
+  {
+    id: "seguro",
+    titulo: "Seguro del Vehículo",
+    icono: "🛡️",
+    color: "#ea580c",
+    estado: { texto: "Pagado hasta 01/02/2026", tipo: "warning" },
+    contenido: [
+      { label: "Aseguradora", valor: "Reale Seguros Generales, S.A." },
+      { label: "Nº Póliza", valor: "3022400030060" },
+      { label: "Efecto", valor: "01/02/2024" },
+      { label: "Vencimiento", valor: "01/02/2025 (Anual renovable)" },
+      { label: "Forma de pago", valor: "Trimestral — 249,45 €/trimestre" },
+      { label: "Prima anual", valor: "932,24 €" },
+      { label: "Último recibo pagado", valor: "01/11/2025 a 01/02/2026 — 249,45 €" },
+      { label: "Conductor declarado", valor: "Félix Pérez Reyes — NIF 24353595E" },
+      { label: "Fecha nacimiento conductor", valor: "29/05/1971" },
+      { label: "Carnet desde", valor: "02/04/2002 — 15 puntos" },
+      { label: "Uso", valor: "Transporte terceros ámbito nacional" },
+      { label: "Mercancías peligrosas", valor: "No" },
+      { label: "Corredor", valor: "Isabel Alba Correduría de Seguros SL" },
+    ],
+  },
+  {
+    id: "garantias",
+    titulo: "Garantías del Seguro",
+    icono: "📜",
+    color: "#ea580c",
+    contenido: [
+      { label: "RC Obligatoria", valor: "Incluida" },
+      { label: "RC Voluntaria", valor: "Incluida" },
+      { label: "Protección jurídica", valor: "Incluida — Libre elección abogado hasta 1.500 €" },
+      { label: "Reclamación de daños", valor: "Incluida — Libre elección abogado hasta 1.500 €" },
+      { label: "Accidentes conductor - Fallecimiento", valor: "6.000 €" },
+      { label: "Accidentes conductor - Invalidez", valor: "6.000 € (baremo)" },
+      { label: "Asistencia sanitaria", valor: "Incluida" },
+      { label: "RC Carga", valor: "150.000 € — Franquicia 150 €" },
+    ],
+  },
+  {
+    id: "grua",
+    titulo: "Grúa Hidráulica",
+    icono: "🏗️",
+    color: "#4338ca",
+    contenido: [
+      { label: "Fabricante", valor: "PALFINGER Krantechnik" },
+      { label: "Modelo", valor: "PK 5800" },
+      { label: "Nº Serie", valor: "9563176" },
+      { label: "Declaración conformidad", valor: "MYCSA — 23/06/2005" },
+      { label: "Directiva CE", valor: "98/37/CE y 89/336/CEE" },
+      { label: "Normas", valor: "EN 292, DIN 15018, ÖNORM M 9600" },
+      { label: "Momento elevación (PK 58)", valor: "14,2 txm" },
+      { label: "Ángulo de giro", valor: "400°" },
+      { label: "Capacidad depósito", valor: "85 L" },
+      { label: "Caudal recomendado", valor: "40 L/min" },
+      { label: "Presión máxima", valor: "265 bar" },
+      { label: "Peso propio", valor: "1.850 kg" },
+      { label: "Alcance hidráulico", valor: "6,1 m" },
+      { label: "Altura plegada", valor: "2,25 m" },
+    ],
+  },
+  {
+    id: "mantenimiento",
+    titulo: "Certificado de Mantenimiento",
+    icono: "🔩",
+    color: "#0d9488",
+    estado: { texto: "Válido — 01/09/2025", tipo: "ok" },
+    contenido: [
+      { label: "Declarante", valor: "Jose Luis Conejero Asunción — DNI 52685403Q" },
+      { label: "Empresa", valor: "Grúas y Transportes Conejero S.L." },
+      { label: "Fecha", valor: "01/09/2025 — Valencia" },
+      { label: "Vehículo", valor: "V 9293DK — RENAULT" },
+      { label: "Grúa autocargante", valor: "S 150 09 TI" },
+      { label: "Contenido", valor: "Revisiones y mantenimiento acorde a instrucciones del fabricante" },
+    ],
+  },
+  {
+    id: "tarjetaTransporte",
+    titulo: "Tarjeta de Transporte",
+    icono: "🚚",
+    color: "#b91c1c",
+    estado: { texto: "Caducada — Renovar", tipo: "error" },
+    contenido: [
+      { label: "Tipo", valor: "MDP — Nacional" },
+      { label: "Nº Tarjeta", valor: "11407688-2" },
+      { label: "Fecha autorización", valor: "20/12/2012" },
+      { label: "Válida hasta", valor: "31/01/2021" },
+      { label: "Próximo visado", valor: "Noviembre 2020" },
+      { label: "Residencia autorización", valor: "Valencia" },
+      { label: "Servicio", valor: "Público" },
+      { label: "⚠️ ATENCIÓN", valor: "Tarjeta caducada desde 31/01/2021. Verificar si se ha renovado." },
+    ],
+  },
+  {
+    id: "antecedentes",
+    titulo: "Informe DGT / Antecedentes",
+    icono: "📄",
+    color: "#64748b",
+    contenido: [
+      { label: "Fecha informe", valor: "01/02/2023" },
+      { label: "Seguro vigente", valor: "Sí — Helvetia (en fecha del informe)" },
+      { label: "ITV vigente", valor: "Sí (en fecha del informe)" },
+      { label: "Cargas/gravámenes", valor: "⚠️ Sí — 2 embargos históricos" },
+      { label: "Embargo 1", valor: "20/02/1998 — Juzgado Social nº3 Valencia" },
+      { label: "Embargo 2", valor: "16/10/1997 — Juzgado 1ª Inst. e Instruc. nº2 Mislata" },
+      { label: "Baja temporal", valor: "16/12/2010 a 22/10/2012 — Voluntaria pet. titular" },
+      { label: "Kilometraje (ene-2023)", valor: "594.315 km" },
+      { label: "Historial titulares", valor: "5 cambios — Actual empresa desde 10/12/1998" },
+    ],
+  },
+  {
+    id: "documentosAdicionales",
+    titulo: "Otros Documentos",
+    icono: "📂",
+    color: "#78716c",
+    contenido: [
+      { label: "Autocertificado revisión izado", valor: "AUTOCERTIFICADO_DE_REVISIÓN_DE_ELEMENTOS_DE_IZADO.docx" },
+      { label: "Certificado mantenimiento (Word)", valor: "CERTIFICADO_MANTENIMIENTO.docx" },
+      { label: "Manual de uso grúa", valor: "INSTRUCCIONES.pdf — Palfinger PK 5800 (17 páginas)" },
+      { label: "Declaración conformidad grúa", valor: "CERTIFICADO_DE_FABRICACION_AT-8_V9293DK.pdf" },
+    ],
+  },
+];
+
+function EstadoBadge({ estado }) {
+  if (!estado) return null;
+  const colores = {
+    ok: { bg: "#dcfce7", text: "#166534", border: "#86efac" },
+    warning: { bg: "#fef9c3", text: "#854d0e", border: "#fde047" },
+    error: { bg: "#fee2e2", text: "#991b1b", border: "#fca5a5" },
+  };
+  const c = colores[estado.tipo] || colores.ok;
+  return (
+    <span
+      style={{
+        fontSize: 11,
+        fontWeight: 700,
+        padding: "3px 10px",
+        borderRadius: 20,
+        background: c.bg,
+        color: c.text,
+        border: `1px solid ${c.border}`,
+        whiteSpace: "nowrap",
+        letterSpacing: 0.3,
+      }}
+    >
+      {estado.texto}
+    </span>
+  );
+}
+
+function SeccionDesplegable({ seccion, abierta, toggle }) {
+  return (
+    <div
+      style={{
+        marginBottom: 6,
+        borderRadius: 10,
+        overflow: "hidden",
+        border: abierta ? `1.5px solid ${seccion.color}22` : "1.5px solid #e5e7eb",
+        background: abierta ? "#fff" : "#fafafa",
+        transition: "all 0.2s ease",
+        boxShadow: abierta ? `0 2px 12px ${seccion.color}11` : "none",
+      }}
+    >
+      <button
+        onClick={toggle}
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "12px 16px",
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          fontFamily: "'DM Sans', sans-serif",
+          textAlign: "left",
+        }}
+      >
+        <span style={{ fontSize: 20, width: 28, textAlign: "center" }}>
+          {seccion.icono}
+        </span>
+        <span
+          style={{
+            flex: 1,
+            fontSize: 14,
+            fontWeight: 700,
+            color: "#1e293b",
+            letterSpacing: -0.2,
+          }}
+        >
+          {seccion.titulo}
+        </span>
+        {seccion.estado && <EstadoBadge estado={seccion.estado} />}
+        <span
+          style={{
+            fontSize: 18,
+            color: "#94a3b8",
+            transform: abierta ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.25s ease",
+            fontWeight: 300,
+          }}
+        >
+          ▼
+        </span>
+      </button>
+
+      {abierta && (
+        <div style={{ padding: "0 16px 14px 54px" }}>
+          <div
+            style={{
+              borderTop: `2px solid ${seccion.color}18`,
+              paddingTop: 10,
+            }}
+          >
+            {seccion.contenido.map((item, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  padding: "5px 0",
+                  borderBottom:
+                    i < seccion.contenido.length - 1
+                      ? "1px solid #f1f5f9"
+                      : "none",
+                  alignItems: "flex-start",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: "#64748b",
+                    minWidth: 140,
+                    paddingTop: 1,
+                    textTransform: "uppercase",
+                    letterSpacing: 0.4,
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                >
+                  {item.label}
+                </span>
+                <span
+                  style={{
+                    fontSize: 13,
+                    color: item.label.includes("⚠️") ? "#dc2626" : "#1e293b",
+                    fontWeight: item.label.includes("⚠️") ? 700 : 500,
+                    fontFamily: "'DM Sans', sans-serif",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {item.valor}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function VehiculoDashboard() {
+  const [abiertas, setAbiertas] = useState({});
+  const [todasAbiertas, setTodasAbiertas] = useState(false);
+
+  const toggle = (id) => {
+    setAbiertas((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleTodas = () => {
+    const nuevo = !todasAbiertas;
+    setTodasAbiertas(nuevo);
+    const estado = {};
+    secciones.forEach((s) => (estado[s.id] = nuevo));
+    setAbiertas(estado);
+  };
+
+  return (
+    <div
+      style={{
+        fontFamily: "'DM Sans', sans-serif",
+        maxWidth: 680,
+        margin: "0 auto",
+        padding: "0 8px",
+      }}
+    >
+      <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;900&display=swap"
+        rel="stylesheet"
+      />
+
+      {/* Header */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)",
+          borderRadius: 14,
+          padding: "20px 22px",
+          marginBottom: 14,
+          color: "#fff",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            top: -20,
+            right: -10,
+            fontSize: 100,
+            opacity: 0.06,
+            lineHeight: 1,
+          }}
+        >
+          🚛
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            marginBottom: 12,
+          }}
+        >
+          <div
+            style={{
+              background: "#fbbf24",
+              color: "#1e293b",
+              fontWeight: 900,
+              fontSize: 18,
+              padding: "8px 14px",
+              borderRadius: 8,
+              letterSpacing: 1,
+              fontFamily: "'DM Sans', sans-serif",
+            }}
+          >
+            {vehiculo.matricula}
+          </div>
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: -0.5 }}>
+              {vehiculo.marca} {vehiculo.modelo.split(" ")[0]}
+            </div>
+            <div style={{ fontSize: 12, opacity: 0.7, marginTop: 2 }}>
+              {vehiculo.tipo} — {vehiculo.masaMaxima} MMA
+            </div>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            gap: 6,
+            flexWrap: "wrap",
+          }}
+        >
+          {[
+            { label: "ITV", valor: "28/05/2026", tipo: "ok" },
+            { label: "Seguro", valor: "01/02/2026", tipo: "warning" },
+            { label: "Tarj. Transporte", valor: "CADUCADA", tipo: "error" },
+          ].map((item, i) => {
+            const colores = {
+              ok: { bg: "rgba(34,197,94,0.2)", border: "rgba(34,197,94,0.4)", text: "#86efac" },
+              warning: { bg: "rgba(250,204,21,0.2)", border: "rgba(250,204,21,0.4)", text: "#fde047" },
+              error: { bg: "rgba(239,68,68,0.25)", border: "rgba(239,68,68,0.5)", text: "#fca5a5" },
+            };
+            const c = colores[item.tipo];
+            return (
+              <div
+                key={i}
+                style={{
+                  fontSize: 10,
+                  fontWeight: 700,
+                  padding: "4px 10px",
+                  borderRadius: 6,
+                  background: c.bg,
+                  border: `1px solid ${c.border}`,
+                  color: c.text,
+                  letterSpacing: 0.3,
+                }}
+              >
+                {item.label}: {item.valor}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Empresa */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          marginBottom: 10,
+          padding: "0 4px",
+        }}
+      >
+        <span style={{ fontSize: 12, color: "#64748b", fontWeight: 500 }}>
+          🏢 {vehiculo.titular}
+        </span>
+        <span style={{ fontSize: 11, color: "#94a3b8" }}>|</span>
+        <span style={{ fontSize: 11, color: "#94a3b8" }}>
+          CIF {vehiculo.cif}
+        </span>
+        <div style={{ flex: 1 }} />
+        <button
+          onClick={toggleTodas}
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: "#2563eb",
+            background: "#eff6ff",
+            border: "1px solid #bfdbfe",
+            borderRadius: 6,
+            padding: "4px 10px",
+            cursor: "pointer",
+            fontFamily: "'DM Sans', sans-serif",
+          }}
+        >
+          {todasAbiertas ? "▲ Cerrar todo" : "▼ Abrir todo"}
+        </button>
+      </div>
+
+      {/* Secciones */}
+      {secciones.map((sec) => (
+        <SeccionDesplegable
+          key={sec.id}
+          seccion={sec}
+          abierta={!!abiertas[sec.id]}
+          toggle={() => toggle(sec.id)}
+        />
+      ))}
+
+      <div
+        style={{
+          textAlign: "center",
+          fontSize: 10,
+          color: "#94a3b8",
+          padding: "12px 0 4px",
+          fontStyle: "italic",
+        }}
+      >
+        {secciones.length} secciones · Documentación actualizada a 02/04/2026
+      </div>
+    </div>
+  );
+}
